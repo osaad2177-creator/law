@@ -129,7 +129,7 @@ export default function LoginPage() {
             المنصة القانونية
           </h1>
           <p className="text-blue-200 mt-2" style={{ fontFamily: "'Cairo', sans-serif" }}>
-            منصة أ.د / محمد التعليمية
+            منصة أ.د / اسلام المتر التعليمية
           </p>
         </div>
 
