@@ -4,10 +4,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/lib/authContext";
+
 import toast from "react-hot-toast";
-import { auth } from "@/lib/firebase";
-import { isAdmin } from "@/lib/firestore";
+
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
