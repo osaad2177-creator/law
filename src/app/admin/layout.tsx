@@ -144,7 +144,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main */}
-      <div style={{ marginRight: "260px" }}>
+      <div className="md:mr-[260px] mr-0">
         <header
           className="bg-white sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
           style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)" }}
