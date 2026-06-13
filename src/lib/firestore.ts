@@ -85,6 +85,15 @@ export async function isAdmin(uid: string): Promise<boolean> {
     return snap.exists();
   } catch (error) {
     console.error("isAdmin error:", error);
+    // Try alternative check via users collection
+    try {
+      const userSnap = await getDoc(doc(db, "users", uid));
+      if (userSnap.exists() && userSnap.data()?.isAdmin === true) {
+        return true;
+      }
+    } catch {
+      // ignore
+    }
     return false;
   }
 }
