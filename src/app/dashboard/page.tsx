@@ -42,11 +42,13 @@ export default function DashboardPage() {
     try {
       const data = await getLectures({
         academicYear: selectedYear,
-        term: selectedTerm,
-        subject,
       });
+      const filtered2 = data.filter(
+        (l) => l.term === selectedTerm && l.subject === subject
+      );
+    
       // Filter: show free ones always, paid ones only if subscribed
-      const filtered = data.filter(
+      const filtered = filtered2.filter(
         (l) => l.isFree || user?.subscriptionStatus === "مشترك"
       );
       setLectures(filtered);
