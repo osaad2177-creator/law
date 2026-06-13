@@ -2,18 +2,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-
 import toast from "react-hot-toast";
-
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [deviceBlocked] = [false];
-  const router = useRouter();
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,15 +19,25 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      const { signInWithEmailAndPassword } = await import("firebase/auth");
+      const {
+        signInWithEmailAndPassword,
+        setPersistence,
+        browserLocalStorage,
+        browserSessionStorage,
+      } = await import("firebase/auth");
       const { auth } = await import("@/lib/firebase");
       const { isAdmin } = await import("@/lib/firestore");
-      
+
+      await setPersistence(
+        auth,
+        rememberMe ? browserLocalStorage : browserSessionStorage
+      );
+
       const credential = await signInWithEmailAndPassword(auth, email, password);
       const adminCheck = await isAdmin(credential.user.uid);
-      
+
       toast.success("تم تسجيل الدخول بنجاح");
-      
+
       if (adminCheck) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         window.location.href = "/admin";
@@ -41,7 +47,10 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       const error = err as { code?: string };
-      if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/user-not-found"
+      ) {
         toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
       } else if (error.code === "auth/too-many-requests") {
         toast.error("تم تجاوز عدد المحاولات. يرجى المحاولة لاحقاً");
@@ -53,49 +62,12 @@ export default function LoginPage() {
     }
   };
 
-  if (deviceBlocked) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{
-          background: "linear-gradient(135deg, #0d1257 0%, #1a237e 50%, #0d1257 100%)",
-        }}
-      >
-        <div
-          className="bg-white rounded-2xl p-10 max-w-md w-full text-center"
-          style={{ boxShadow: "0 25px 60px rgba(0,0,0,0.3)" }}
-        >
-          <div className="text-6xl mb-6">🔒</div>
-          <h2
-            className="text-2xl font-bold mb-4"
-            style={{ fontFamily: "'Amiri', serif", color: "#dc2626" }}
-          >
-            تم حظر الجهاز
-          </h2>
-          <p className="text-gray-600 mb-4" style={{ fontFamily: "'Cairo', sans-serif" }}>
-            هذا الحساب مرتبط بجهاز آخر. لا يمكن تسجيل الدخول من جهاز مختلف.
-          </p>
-          <p className="text-sm text-gray-500" style={{ fontFamily: "'Cairo', sans-serif" }}>
-            للحصول على المساعدة، يرجى التواصل مع الإدارة عبر واتساب على الرقم{" "}
-            <strong>01017693700</strong>
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-6 btn-primary w-full"
-            style={{ background: "#1a237e" }}
-          >
-            إعادة المحاولة
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
       style={{
-        background: "linear-gradient(135deg, #0d1257 0%, #1a237e 50%, #0d1257 100%)",
+        background:
+          "linear-gradient(135deg, #0d1257 0%, #1a237e 50%, #0d1257 100%)",
       }}
     >
       {/* Background decoration */}
@@ -118,7 +90,10 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4"
-            style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)" }}
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(10px)",
+            }}
           >
             <span className="text-4xl">⚖️</span>
           </div>
@@ -128,7 +103,10 @@ export default function LoginPage() {
           >
             المنصة القانونية
           </h1>
-          <p className="text-blue-200 mt-2" style={{ fontFamily: "'Cairo', sans-serif" }}>
+          <p
+            className="text-blue-200 mt-2"
+            style={{ fontFamily: "'Cairo', sans-serif" }}
+          >
             منصة أ.د / اسلام المتر التعليمية
           </p>
         </div>
@@ -146,6 +124,7 @@ export default function LoginPage() {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
             <div>
               <label
                 className="block text-sm font-semibold mb-2"
@@ -164,6 +143,7 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Password */}
             <div>
               <label
                 className="block text-sm font-semibold mb-2"
@@ -182,6 +162,35 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Remember Me */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={loading}
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  cursor: "pointer",
+                  accentColor: "#1a237e",
+                }}
+              />
+              <label
+                htmlFor="rememberMe"
+                style={{
+                  fontFamily: "'Cairo', sans-serif",
+                  fontSize: "14px",
+                  color: "#475569",
+                  cursor: "pointer",
+                }}
+              >
+                تذكرني
+              </label>
+            </div>
+
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -236,7 +245,9 @@ export default function LoginPage() {
 
       <style jsx global>{`
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
