@@ -99,7 +99,7 @@ export default function AdminLayout({
               👑
             </div>
             <div>
-              <div className="text-white font-semibold text-sm">{user.fullName}</div>
+              <div className="text-white font-semibold text-sm">{user?.fullName}</div>
               <div className="text-yellow-300 text-xs">مدير النظام</div>
             </div>
           </div>
