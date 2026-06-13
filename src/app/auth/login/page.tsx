@@ -23,11 +23,20 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      await signIn(email, password);
-toast.success("تم تسجيل الدخول بنجاح");
-await new Promise((resolve) => setTimeout(resolve, 1500));
-const adminCheck = await isAdmin(auth.currentUser!.uid);
-router.push(adminCheck ? "/admin" : "/dashboard");
+      const { signInWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase");
+      const { isAdmin } = await import("@/lib/firestore");
+      
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const adminCheck = await isAdmin(credential.user.uid);
+      
+      toast.success("تم تسجيل الدخول بنجاح");
+      
+      if (adminCheck) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/dashboard";
+      }
     } catch (err: unknown) {
       const error = err as { code?: string };
       if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
