@@ -132,31 +132,21 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
         {/* YouTube embed */}
         <div style={{ position: "relative", paddingTop: "56.25%" }}>
           <iframe
-            src={embedUrl}
-            title={lecture.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-            allowFullScreen
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              border: "none",
-            }}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              border: "none",
-            }}
-            // Disable PiP
-            
-            sandbox="allow-scripts allow-same-origin allow-presentation"
-          />
+  src={embedUrl}
+  title={lecture.title}
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+  allowFullScreen
+  style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    border: "none",
+  }}
+  sandbox="allow-scripts allow-same-origin allow-presentation"
+/>
         </div>
       </div>
 
