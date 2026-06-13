@@ -22,15 +22,15 @@ export default function LoginPage() {
       const {
         signInWithEmailAndPassword,
         setPersistence,
-        browserLocalStorage,
-        browserSessionStorage,
+        browserLocalPersistence,
+        browserSessionPersistence,
       } = await import("firebase/auth");
       const { auth } = await import("@/lib/firebase");
       const { isAdmin } = await import("@/lib/firestore");
 
       await setPersistence(
         auth,
-        rememberMe ? browserLocalStorage : browserSessionStorage
+        rememberMe ? browserLocalPersistence : browserSessionPersistence
       );
 
       const credential = await signInWithEmailAndPassword(auth, email, password);
@@ -214,6 +214,37 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          {/* Forgot password */}
+          <div className="mt-4 text-center">
+            <button
+              onClick={async () => {
+                if (!email) {
+                  toast.error("أدخل بريدك الإلكتروني أولاً");
+                  return;
+                }
+                try {
+                  const { sendPasswordResetEmail } = await import("firebase/auth");
+                  const { auth } = await import("@/lib/firebase");
+                  await sendPasswordResetEmail(auth, email);
+                  toast.success("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك");
+                } catch {
+                  toast.error("حدث خطأ، تأكد من البريد الإلكتروني");
+                }
+              }}
+              style={{
+                fontFamily: "'Cairo', sans-serif",
+                fontSize: "13px",
+                color: "#1a237e",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+            >
+              نسيت كلمة المرور؟
+            </button>
+          </div>
 
           <div
             className="mt-6 pt-6 text-center"
