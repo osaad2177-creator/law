@@ -26,7 +26,12 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!loading && !isAdmin) {
-      router.push("/auth/login");
+      const timer = setTimeout(() => {
+        if (!isAdmin) {
+          router.push("/auth/login");
+        }
+      }, 3000);
+      return () => clearTimeout(timer);
     }
   }, [isAdmin, loading, router]);
 
