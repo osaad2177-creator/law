@@ -33,8 +33,10 @@ export default function LoginPage() {
       toast.success("تم تسجيل الدخول بنجاح");
       
       if (adminCheck) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         window.location.href = "/admin";
       } else {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         window.location.href = "/dashboard";
       }
     } catch (err: unknown) {
