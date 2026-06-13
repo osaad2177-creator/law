@@ -135,8 +135,16 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
             src={embedUrl}
             title={lecture.title}
             frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              border: "none",
+            }}
             style={{
               position: "absolute",
               top: 0,
