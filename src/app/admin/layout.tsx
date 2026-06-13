@@ -48,7 +48,9 @@ export default function AdminLayout({
     );
   }
 
-  if (!user || !isAdmin) return null;
+  if (!isAdmin) {
+    return null;
+  }
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
