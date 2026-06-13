@@ -19,7 +19,9 @@ export default function DashboardPage() {
   const [loadingLectures, setLoadingLectures] = useState(false);
   const [selectedLecture, setSelectedLecture] = useState<Lecture | null>(null);
 
-  const years: AcademicYear[] = ["الأولى", "الثانية", "الثالثة", "الرابعة"];
+  const years: AcademicYear[] = user?.isAdmin
+    ? ["الأولى", "الثانية", "الثالثة", "الرابعة"]
+    : [user?.academicYear as AcademicYear];
   const curriculum = CURRICULUM[selectedYear];
   const subjects =
     selectedTerm === "الأول" ? curriculum.term1 : curriculum.term2;
