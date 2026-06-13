@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/authContext";
 import toast from "react-hot-toast";
-
+import { auth } from "@/lib/firebase";
+import { isAdmin } from "@/lib/firestore";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,8 +25,9 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
 toast.success("تم تسجيل الدخول بنجاح");
-await new Promise((resolve) => setTimeout(resolve, 1000));
-router.push("/dashboard");
+await new Promise((resolve) => setTimeout(resolve, 1500));
+const adminCheck = await isAdmin(auth.currentUser!.uid);
+router.push(adminCheck ? "/admin" : "/dashboard");
     } catch (err: unknown) {
       const error = err as { code?: string };
       if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
