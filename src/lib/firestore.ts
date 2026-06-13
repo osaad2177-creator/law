@@ -130,20 +130,28 @@ export async function getLectures(filters?: {
   subject?: string;
   isFree?: boolean;
 }): Promise<Lecture[]> {
-  let q = query(collection(db, "lectures"), orderBy("createdAt", "desc"));
+  // Fetch all lectures and filter in memory to avoid composite index issues
+  const snap = await getDocs(collection(db, "lectures"));
+  let results = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Lecture));
 
   if (filters?.academicYear) {
-    q = query(q, where("academicYear", "==", filters.academicYear));
+    results = results.filter((l) => l.academicYear === filters.academicYear);
   }
   if (filters?.term) {
-    q = query(q, where("term", "==", filters.term));
+    results = results.filter((l) => l.term === filters.term);
+  }
+  if (filters?.subject) {
+    results = results.filter((l) => l.subject === filters.subject);
   }
   if (filters?.isFree !== undefined) {
-    q = query(q, where("isFree", "==", filters.isFree));
+    results = results.filter((l) => l.isFree === filters.isFree);
   }
 
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Lecture));
+  return results.sort((a, b) => {
+    const aTime = (a.createdAt as any)?.seconds || 0;
+    const bTime = (b.createdAt as any)?.seconds || 0;
+    return bTime - aTime;
+  });
 }
 
 export async function getFreeLectures(): Promise<Lecture[]> {
