@@ -43,7 +43,6 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
   // ─── Screenshot detection ─────────────────────────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // PrintScreen, Windows+Shift+S, etc.
       if (
         e.key === "PrintScreen" ||
         (e.key === "S" && e.shiftKey && e.metaKey) ||
@@ -55,19 +54,8 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
       }
     };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        // Possible screenshot or tab switch
-      }
-    };
-
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   if (!embedUrl) {
@@ -76,10 +64,7 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
         className="flex items-center justify-center h-48 rounded-xl"
         style={{ background: "#f1f5f9" }}
       >
-        <p
-          className="text-gray-500"
-          style={{ fontFamily: "'Cairo', sans-serif" }}
-        >
+        <p className="text-gray-500" style={{ fontFamily: "'Cairo', sans-serif" }}>
           رابط الفيديو غير صحيح
         </p>
       </div>
@@ -96,10 +81,9 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
         {lecture.title}
       </h4>
 
-      {/* Video container with security wrapper */}
+      {/* Video container */}
       <div
         ref={containerRef}
-        className="video-container"
         style={{
           position: "relative",
           background: "#000",
@@ -110,15 +94,14 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
         }}
         onContextMenu={(e) => e.preventDefault()}
       >
-        {/* Transparent shield overlay (top 40% and sides to block right-click on video) */}
+        {/* Shield overlay - blocks right click but allows play button */}
         <div
-          className="video-shield"
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            bottom: "60px",
+            bottom: "50px",
             zIndex: 5,
             cursor: "default",
           }}
@@ -129,24 +112,24 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
         {/* Moving Watermark */}
         <WatermarkOverlay user={user} />
 
-        {/* YouTube embed */}
+        {/* YouTube embed - 16:9 ratio */}
         <div style={{ position: "relative", paddingTop: "56.25%" }}>
           <iframe
-  src={embedUrl}
-  title={lecture.title}
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-  allowFullScreen
-  style={{
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    border: "none",
-  }}
-  sandbox="allow-scripts allow-same-origin allow-presentation"
-/>
+            src={embedUrl}
+            title={lecture.title}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              border: "none",
+            }}
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+          />
         </div>
       </div>
 
@@ -154,10 +137,7 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
       {showWarning && (
         <div
           className="mt-3 p-3 rounded-xl text-center"
-          style={{
-            background: "#fee2e2",
-            border: "1px solid #fca5a5",
-          }}
+          style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}
         >
           <p
             className="text-red-700 text-sm font-semibold"
@@ -177,20 +157,6 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
           {lecture.description}
         </p>
       )}
-
-      {/* Disclaimer */}
-      <div
-        className="mt-4 p-3 rounded-xl text-xs"
-        style={{
-          background: "#fffbeb",
-          border: "1px solid #fde68a",
-          fontFamily: "'Cairo', sans-serif",
-          color: "#92400e",
-        }}
-      >
-        ⚠️ لا يمكن  تصوير الشاشة أو التسجيل 
-       
-      </div>
     </div>
   );
 }
