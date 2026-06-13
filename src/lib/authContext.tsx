@@ -57,11 +57,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadUserData = useCallback(async (fbUser: FirebaseUser) => {
     try {
-      const profile = await getUserProfile(fbUser.uid);
       const adminStatus = await checkIsAdmin(fbUser.uid).catch(() => false);
 
-      // Admin with no users document
-      if (!profile && adminStatus) {
+      if (adminStatus) {
         setDeviceBlocked(false);
         setUser({
           uid: fbUser.uid,
@@ -79,43 +77,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const profile = await getUserProfile(fbUser.uid);
       if (!profile) return;
 
-      if (profile) {
-        // Device fingerprint check
-        const currentFingerprint = await getDeviceFingerprint();
+      const currentFingerprint = await getDeviceFingerprint();
 
-        if (profile.isBlocked) {
+      if (profile.isBlocked) {
+        await firebaseSignOut(auth);
+        setUser(null);
+        setFirebaseUser(null);
+        setDeviceBlocked(true);
+        return;
+      }
+
+      if (profile.deviceFingerprint) {
+        if (profile.deviceFingerprint !== currentFingerprint) {
           await firebaseSignOut(auth);
+          setDeviceBlocked(true);
           setUser(null);
           setFirebaseUser(null);
-          setDeviceBlocked(true);
           return;
         }
-
-        if (profile.deviceFingerprint) {
-          if (profile.deviceFingerprint !== currentFingerprint) {
-            await firebaseSignOut(auth);
-            setDeviceBlocked(true);
-            setUser(null);
-            setFirebaseUser(null);
-            return;
-          }
-        } else {
-          // First login - bind device (don't block if this fails)
-          try {
-            await setUserDeviceFingerprint(fbUser.uid, currentFingerprint);
-            profile.deviceFingerprint = currentFingerprint;
-          } catch (e) {
-            console.error("Device binding failed:", e);
-          }
+      } else {
+        try {
+          await setUserDeviceFingerprint(fbUser.uid, currentFingerprint);
+          profile.deviceFingerprint = currentFingerprint;
+        } catch (e) {
+          console.error("Device binding failed:", e);
         }
-
-        setDeviceBlocked(false);
-        setUser(profile);
-        setFirebaseUser(fbUser);
-        setIsAdmin(adminStatus);
       }
+
+      setDeviceBlocked(false);
+      setUser(profile);
+      setFirebaseUser(fbUser);
+      setIsAdmin(false);
+
     } catch (error) {
       console.error("Error loading user data:", error);
     }
