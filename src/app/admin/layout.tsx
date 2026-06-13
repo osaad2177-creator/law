@@ -25,12 +25,10 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
-      if (!user && !isAdmin) {
-        router.push("/auth/login");
-      }
+    if (!loading && !isAdmin) {
+      router.push("/auth/login");
     }
-  }, [user, isAdmin, loading, router]);
+  }, [isAdmin, loading, router]);
 
   const handleSignOut = async () => {
     await signOut();
