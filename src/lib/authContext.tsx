@@ -56,9 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [deviceBlocked, setDeviceBlocked] = useState(false);
 
   const loadUserData = useCallback(async (fbUser: FirebaseUser) => {
-    try {
-      const profile = await getUserProfile(fbUser.uid);
-      const adminStatus = await checkIsAdmin(fbUser.uid);
+  try {
+    const profile = await getUserProfile(fbUser.uid);
+    const adminStatus = await checkIsAdmin(fbUser.uid).catch(() => false);
 
       if (profile) {
         // Device fingerprint check
