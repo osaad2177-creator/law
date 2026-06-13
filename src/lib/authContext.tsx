@@ -73,18 +73,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (profile.deviceFingerprint) {
-          if (profile.deviceFingerprint !== currentFingerprint) {
-            await firebaseSignOut(auth);
-            setDeviceBlocked(true);
-            setUser(null);
-            setFirebaseUser(null);
-            return;
-          }
-        } else {
-          // First login - bind device
-          await setUserDeviceFingerprint(fbUser.uid, currentFingerprint);
-          profile.deviceFingerprint = currentFingerprint;
-        }
+  if (profile.deviceFingerprint !== currentFingerprint) {
+    await firebaseSignOut(auth);
+    setDeviceBlocked(true);
+    setUser(null);
+    setFirebaseUser(null);
+    return;
+  }
+} else {
+  // First login - bind device (don't block if this fails)
+  try {
+    await setUserDeviceFingerprint(fbUser.uid, currentFingerprint);
+    profile.deviceFingerprint = currentFingerprint;
+  } catch (e) {
+    console.error("Device binding failed:", e);
+  }
+}
 
         setDeviceBlocked(false);
         setUser(profile);
@@ -131,14 +135,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data.password
       );
       await createUserProfile(credential.user.uid, {
-        fullName: data.fullName,
-        academicYear: data.academicYear,
-        phone: data.phone,
-        email: data.email,
-        subscriptionStatus: "غير مشترك",
-        isBlocked: false,
-      });
-      await loadUserData(credential.user);
+  fullName: data.fullName,
+  academicYear: data.academicYear,
+  phone: data.phone,
+  email: data.email,
+  subscriptionStatus: "غير مشترك",
+  isBlocked: false,
+});
+
+// Small delay to ensure Firestore write completes
+await new Promise((resolve) => setTimeout(resolve, 1500));
+await loadUserData(credential.user);
       await logActivity(credential.user.uid, "تسجيل حساب جديد", data.fullName);
     } finally {
       setLoading(false);
