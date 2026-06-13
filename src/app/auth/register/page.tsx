@@ -64,7 +64,7 @@ export default function RegisterPage() {
         password: formData.password,
       });
       toast.success("تم إنشاء الحساب بنجاح! مرحباً بك");
-      router.push("/dashboard");
+setTimeout(() => router.push("/dashboard"), 1500);
     } catch (err: unknown) {
       const error = err as { code?: string };
       if (error.code === "auth/email-already-in-use") {
