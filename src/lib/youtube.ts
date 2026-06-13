@@ -6,7 +6,6 @@ export function extractYouTubeId(url: string): string | null {
     /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
   ];
-
   for (const pattern of patterns) {
     const match = url.match(pattern);
     if (match) return match[1];
@@ -15,7 +14,8 @@ export function extractYouTubeId(url: string): string | null {
 }
 
 export function buildEmbedUrl(videoId: string): string {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&controls=1&enablejsapi=1&showinfo=0&iv_load_policy=3&color=white&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&controls=1&enablejsapi=1&showinfo=0&iv_load_policy=3&color=white&disablekb=0&fs=1&cc_load_policy=0&origin=${origin}&widget_referrer=${origin}`;
 }
 
 export function obfuscateUrl(url: string): string {
