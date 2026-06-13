@@ -15,7 +15,7 @@ export function extractYouTubeId(url: string): string | null {
 }
 
 export function buildEmbedUrl(videoId: string): string {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&controls=1&enablejsapi=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
+  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&controls=1&enablejsapi=1&showinfo=0&iv_load_policy=3&color=white&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
 }
 
 export function obfuscateUrl(url: string): string {
