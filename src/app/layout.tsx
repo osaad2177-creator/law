@@ -5,7 +5,7 @@ import { AuthProvider } from "@/lib/authContext";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "المنصة التعليمية القانونية",
+  title: "اسلام المتر ",
   description: "منصة تعليمية متكاملة لطلاب كلية الحقوق",
   icons: { icon: "/favicon.ico" },
 };
