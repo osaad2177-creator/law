@@ -12,10 +12,6 @@ import {
   orderBy,
   addDoc,
   serverTimestamp,
-  Timestamp,
-  limit,
-  startAfter,
-  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { User, Lecture, SubscriptionRequest } from "@/types";
@@ -83,8 +79,14 @@ export async function resetUserDevice(uid: string): Promise<void> {
 // ─── Admin check ─────────────────────────────────────────────────────────────
 
 export async function isAdmin(uid: string): Promise<boolean> {
-  const snap = await getDoc(doc(db, "admins", uid));
-  return snap.exists();
+  try {
+    const snap = await getDoc(doc(db, "admins", uid));
+    console.log("isAdmin check:", uid, "exists:", snap.exists());
+    return snap.exists();
+  } catch (error) {
+    console.error("isAdmin error:", error);
+    return false;
+  }
 }
 
 // ─── Lectures ─────────────────────────────────────────────────────────────────
