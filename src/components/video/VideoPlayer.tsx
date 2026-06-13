@@ -190,8 +190,8 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
           color: "#92400e",
         }}
       >
-        ⚠️ لا يمكن منع تصوير الشاشة أو التسجيل بنسبة 100% عبر الويب، ولكن تم
-        تطبيق أقصى وسائل الحماية المتاحة.
+        ⚠️ لا يمكن  تصوير الشاشة أو التسجيل 
+       
       </div>
     </div>
   );
