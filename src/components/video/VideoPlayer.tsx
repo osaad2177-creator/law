@@ -146,7 +146,7 @@ export default function VideoPlayer({ lecture, user }: VideoPlayerProps) {
               border: "none",
             }}
             // Disable PiP
-            disablePictureInPicture
+            
             sandbox="allow-scripts allow-same-origin allow-presentation"
           />
         </div>
