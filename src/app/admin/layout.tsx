@@ -26,11 +26,8 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (!loading) {
-      if (!user) {
+      if (!user && !isAdmin) {
         router.push("/auth/login");
-      } else if (!isAdmin) {
-        router.push("/dashboard");
-        toast.error("ليس لديك صلاحية الوصول لهذه الصفحة");
       }
     }
   }, [user, isAdmin, loading, router]);
