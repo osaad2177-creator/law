@@ -163,8 +163,7 @@ export default function DashboardLayout({
 
       {/* Main content area */}
       <div
-        className="transition-all duration-300"
-        style={{ marginRight: "260px" }}
+        className="transition-all duration-300 md:mr-[260px] mr-0"
       >
         {/* Top bar */}
         <header
