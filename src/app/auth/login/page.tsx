@@ -23,8 +23,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn(email, password);
-      toast.success("تم تسجيل الدخول بنجاح");
-      router.push("/dashboard");
+toast.success("تم تسجيل الدخول بنجاح");
+await new Promise((resolve) => setTimeout(resolve, 1000));
+router.push("/dashboard");
     } catch (err: unknown) {
       const error = err as { code?: string };
       if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found") {
